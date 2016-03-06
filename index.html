@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="node_modules/skeleton-css/css/normalize.css">
+    <link rel="stylesheet" href="node_modules/skeleton-css/css/skeleton.css">
+    <style>
+      body {
+        background-color: #263238;
+        color: #ecf0f1;
+      }
+      a {
+        color: white;
+      }
+      a:hover {
+        color: grey;
+      }
+      #video_row {
+        margin-top: 35px;
+        height: 500px;
+      }
+      #status_row {
+        text-align: center;
+        padding-top: 20px;
+        background: rgba(0, 0, 0, 1);
+        color: rgb(0,248, 79);
+      }
+      #icon_row {
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+
+      <div id="video_row" class="row">
+        <webview id="video" autosize="true"></webview>
+      </div>
+
+      <div id="status_row" class="row">
+        <div class="one-half column">
+          <p id="status">No Status Yet</p>
+        </div>
+        <div class="one-half column">
+          <p>
+            <span id="latitude">No GPS Yet</span>
+            <br>
+            <span id="longitude"></span>
+            <br>
+            <span id="altitude"></span>
+          </p>
+        </div>
+      </div>
+
+      <div id="icon_row" class="row">
+        <a id="takeoff" class="fa fa-plane fa-5x"></a>
+        <a id="land" class="fa fa-cloud-download fa-5x"></a>
+        <a id="forward" class="fa fa-angle-double-up fa-5x"></a>
+        <a id="backward" class="fa fa-angle-double-down fa-5x"></a>
+        <a id="left" class="fa fa-angle-double-left fa-5x"></a>
+        <a id="right" class="fa fa-angle-double-right fa-5x"></a>
+        <a id="higher" class="fa fa-chevron-circle-up fa-5x"></a>
+        <a id="lower" class="fa fa-chevron-circle-down fa-5x"></a>
+        <a id="rotate-left" class="fa fa-undo fa-5x"></a>
+        <a id="rotate-right" class="fa fa-repeat fa-5x"></a>
+        <a id="picture" class="fa fa-camera fa-5x"></a>
+        <a id="hover" class="fa fa-stop fa-5x"></a>
+      </div>
+    </div>
+
+    <script>
+      'use strict'
+      const drone = require('node-bebop').createClient();
+      const $ = require('jquery');
+
+      // interface elements
+      const $video = $('#video');
+      const $status = $('#status');
+      const $latitude = $('#latitude');
+      const $longitude = $('#longitude');
+      const $altitude = $('#altitude');
+
+      // icons (turn green during keypress for user-feedback)
+      const $takeOff = $('#takeoff');
+      const $land = $('#land');
+      const $forward = $('#forward');
+      const $backward = $('#backward');
+      const $left = $('#left');
+      const $right = $('#right');
+      const $higher = $('#higher');
+      const $lower = $('#lower');
+      const $rotate_left = $('#rotate-left');
+      const $rotate_right = $('#rotate-right');
+      const $picture = $('#picture');
+      const $hover = $('#hover');
+
+      const iconHighlightColor = 'rgb(0,248, 79)';
+
+      // when drone connects, bind certain keys to drone functions
+      function processKeyPress(e) {
+        //prefer jQuery normalization
+        let keyCode = e.which || e.keyCode
+        const keyCodeFunctions = {
+          84: () => { // key: T, action: takeoff
+            $status.text(keyCode + " takeoff")
+            $takeOff.css('color', iconHighlightColor)
+            drone.takeOff()
+          },
+          76: () => { // key: L, action: land
+            $status.text(keyCode + " land")
+            $land.css('color', iconHighlightColor)
+            drone.land()
+          },
+          65: () => { // key: A, action: left
+            $status.text(keyCode + " left")
+            $left.css("color", iconHighlightColor)
+            drone.left(100)
+          },
+          87: () => { // key: W, action: forward
+            $status.text(keyCode + " forward")
+            $forward.css("color", iconHighlightColor)
+            drone.forward(100)
+          },
+          68: () => { // key: D, action: right
+            $status.text(keyCode + " right")
+            $right.css("color", iconHighlightColor)
+            drone.right(100)
+          },
+          83: () => { // key: S, action: backward
+            $status.text(keyCode + " backward")
+            $backward.css("color", iconHighlightColor)
+            drone.backward(100)
+          },
+          38: () => { //key: up-arrow, action: higher
+            $status.text(keyCode + " higher")
+            $higher.css("color", iconHighlightColor)
+            drone.up(100)
+          },
+          40: () => { //key: down-arrow, action: lower
+            $status.text(keyCode + " lower")
+            $lower.css("color", iconHighlightColor)
+            drone.down(100)
+          },
+          37: () => { //key: left-arrow, action: rotate left
+            $status.text(keyCode + " rotate left")
+            $rotate_left.css("color", iconHighlightColor)
+            drone.counterClockwise(100)
+          },
+          39: () => { //key: right-arrow, action: rotate right
+            $status.text(keyCode + " rotate right")
+            $rotate_right.css("color", iconHighlightColor)
+            drone.clockwise(100)
+          },
+          80: () => { //key: P, action: take a picture (currently not working)
+            $status.text(keyCode + " attempting to take picture")
+            $picture.css('color', iconHighlightColor)
+            drone.takePicture('BEBOP_PIC.jpg')
+          },
+          32: () => { //key: SPACEBAR, action: hover/stop
+            $status.text(keyCode + " hover-mode")
+            $hover.css('color', iconHighlightColor)
+            drone.stop()
+          }
+        }
+
+        if (!keyCodeFunctions[keyCode]) {
+          // error handling
+          $status.text(keyCode, "not a valid drone key-command")
+        } else {
+          // run the function bound to the key pressed
+          keyCodeFunctions[keyCode]()
+        }
+      } // end of processKeyPress()
+      // when drone connects, bind certain keys to drone functions
+      function processKeyUp(e) {
+        //prefer jQuery normalization
+        let keyCode = e.which || e.keyCode
+        const keyCodeIcons = {
+          84: $takeOff,
+          76: $land,
+          65: $left,
+          87: $forward,
+          68: $right,
+          83: $backward,
+          38: $higher,
+          40: $lower,
+          37: $rotate_left,
+          39: $rotate_right,
+          80: $picture,
+          32: $hover
+        }
+        if (!keyCodeIcons[keyCode]) {
+          // error handling
+          $status.text(keyCode, "not a valid drone key-command")
+        } else {
+          // when the user releases keypress, tell the drone to stop/hover
+          keyCodeIcons[keyCode].css('color', 'white')
+          drone.stop()
+        }
+      } // end of processKeyUp()
+
+      // let output,   video,   fs = require('fs'); var Player = require('./Broadway-master/Player/Player.js'); var player = new Player({useWorker: true, workerFile: './Broadway-master/Player/Decoder.js'}); video streaming logic video =
+      // drone.getVideoStream();
+      //
+      // //console.log(video); video.on("data", function(data) {   console.log('new data!', data);   buf = data;   $video.attr("src", buf); }); output = fs.createWriteStream('./video.h264') video = drone.getVideoStream(); // video.pipe(output)
+      // video.on("data", function (data) {   console.log('new data!', data);   buf = data;   $video.attr("src", buf); });
+
+      drone.connect(() => {
+        $status.text('connected to drone!')
+        $(document).keydown(e => processKeyPress(e))
+        $(document).keyup(e => processKeyUp(e))
+        startGPS()
+      })
+
+      //gps logic
+      let startGPS = () => {
+        drone.GPSSettings.resetHome()
+        drone.WifiSettings.outdoorSetting(1)
+        drone.on("PositionChanged", function (data) {
+          //update view with current GPS console.log(data)
+          $latitude.text(`lat: ${data.latitude}`)
+          $longitude.text(`lon: ${data.longitude}`)
+          $altitude.text(`alt: ${data.altitude}`)
+        })
+      }
+    </script>
+  </body>
+</html>
