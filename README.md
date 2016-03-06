@@ -1,5 +1,6 @@
-# bebop-dashboard
+# drone-dashboard
 #### an OSX application for controlling the Parrot Bebop Drone
+
 
 ####What's working:
 * Takeoff, Land (T key, L key)

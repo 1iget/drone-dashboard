@@ -120,42 +120,42 @@
           65: () => { // key: A, action: left
             $status.text(keyCode + " left")
             $left.css("color", iconHighlightColor)
-            drone.left(100)
+            drone.left(50)
           },
           87: () => { // key: W, action: forward
             $status.text(keyCode + " forward")
             $forward.css("color", iconHighlightColor)
-            drone.forward(100)
+            drone.forward(50)
           },
           68: () => { // key: D, action: right
             $status.text(keyCode + " right")
             $right.css("color", iconHighlightColor)
-            drone.right(100)
+            drone.right(50)
           },
           83: () => { // key: S, action: backward
             $status.text(keyCode + " backward")
             $backward.css("color", iconHighlightColor)
-            drone.backward(100)
+            drone.backward(50)
           },
           38: () => { //key: up-arrow, action: higher
             $status.text(keyCode + " higher")
             $higher.css("color", iconHighlightColor)
-            drone.up(100)
+            drone.up(50)
           },
           40: () => { //key: down-arrow, action: lower
             $status.text(keyCode + " lower")
             $lower.css("color", iconHighlightColor)
-            drone.down(100)
+            drone.down(50)
           },
           37: () => { //key: left-arrow, action: rotate left
             $status.text(keyCode + " rotate left")
             $rotate_left.css("color", iconHighlightColor)
-            drone.counterClockwise(100)
+            drone.counterClockwise(50)
           },
           39: () => { //key: right-arrow, action: rotate right
             $status.text(keyCode + " rotate right")
             $rotate_right.css("color", iconHighlightColor)
-            drone.clockwise(100)
+            drone.clockwise(50)
           },
           80: () => { //key: P, action: take a picture (currently not working)
             $status.text(keyCode + " attempting to take picture")
