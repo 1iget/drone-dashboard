@@ -40,7 +40,7 @@
     <div class="container">
 
       <div id="video_row" class="row">
-        <webview id="video" autosize="true"></webview>
+        <!-- <webview id="video" autosize="true"></webview> -->
       </div>
 
       <div id="status_row" class="row">
@@ -81,6 +81,7 @@
 
       // interface elements
       const $video = $('#video');
+      const $vidrow = $('#video_row')
       const $status = $('#status');
       const $latitude = $('#latitude');
       const $longitude = $('#longitude');
@@ -205,11 +206,32 @@
         }
       } // end of processKeyUp()
 
-      // let output,   video,   fs = require('fs'); var Player = require('./Broadway-master/Player/Player.js'); var player = new Player({useWorker: true, workerFile: './Broadway-master/Player/Decoder.js'}); video streaming logic video =
-      // drone.getVideoStream();
-      //
-      // //console.log(video); video.on("data", function(data) {   console.log('new data!', data);   buf = data;   $video.attr("src", buf); }); output = fs.createWriteStream('./video.h264') video = drone.getVideoStream(); // video.pipe(output)
-      // video.on("data", function (data) {   console.log('new data!', data);   buf = data;   $video.attr("src", buf); });
+      var stream = drone.getVideoStream();
+      var Player = require('./Broadway-master/Player/Player');
+      var fs = require('fs');
+      // var output = fs.createWriteStream("./video.h264")
+      // stream.pipe(output);
+      var player = new Player({
+        useWorker: true,
+        workerFile: './Broadway-master/Player/Decoder.js'
+      });
+
+      $vidrow.append(player.canvas)
+      $vidrow.attr('id', 'video')
+      var toUint8Array = function (parStr) {
+          var raw = atob(parStr);
+          var array = new Uint8Array(new ArrayBuffer(raw.length));
+
+          Array.prototype.forEach.call(raw, function (data, index) {
+              array[index] = raw.charCodeAt(index);
+          })
+
+          return array;
+      };
+      stream.on('data', function (data) {
+          player.decode(toUint8Array(data.toString('base64')));
+          // console.log("GEzTTIN DATA");
+      });
 
       drone.connect(() => {
         $status.text('connected to drone!')
