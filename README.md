@@ -9,9 +9,9 @@
 * Rotate left, Rotate right (Left arrow, Right arrow)
 * Hover (release the key you're currently pressing)
 * GPS: latitude, longitude, altitude update on dashboard
+* Video stream (although sorta glitchy as seen in interface example below)
 
 ####What we're currently working on:
-* live-video stream (so you don't have to look at the drone, just your screen, this is a top priority for beta release).
 * start and stop recording video to disk (tested and working, will not be available until how the user interaction is decided)
 * taking/saving pictures by using the spacebar (currently throws error).
 * overlaying GPS coordinates onto google maps (not quite clear how this will be achieved, as you connect to the drone's wifi network and lose previous wifi connection which is needed for updating the google map)
@@ -35,4 +35,4 @@ Now that you're in control, anytime you press a key it's icon will turn green un
 
 ####Interface
 
-![interface_example](https://github.com/gcwelborn/drone-dashboard/blob/master/drone-dashboard-example.jpg)
+![interface_example](https://github.com/gcwelborn/drone-dashboard/blob/master/drone-dashboard-example.gif)
